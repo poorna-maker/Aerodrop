@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroDrop | Fluid P2P</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366F1;
+            --primary-light: #EEF2FF;
+            --bg: #F8F9FD;
+            --surface: #FFFFFF;
+            --text-main: #1E293B;
+            --text-dim: #64748B;
+            --shadow: 0 20px 50px rgba(99, 102, 241, 0.05);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #E2E8F0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-main);
+        }
+
+        /* Phone Frame */
+        .phone-container {
+            width: 375px;
+            height: 720px;
+            background-color: var(--bg);
+            border-radius: 50px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Fluid Background Elements */
+        .blob {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--primary-light) 0%, transparent 70%);
+            filter: blur(40px);
+            z-index: 0;
+            border-radius: 50%;
+        }
+        .blob-1 { top: -100px; right: -100px; animation: float 10s infinite alternate; }
+        .blob-2 { bottom: -50px; left: -50px; background: radial-gradient(circle, #FDE68A 0%, transparent 70%); opacity: 0.3; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-30px, 30px); }
+        }
+
+        /* Header */
+        header {
+            padding: 60px 28px 20px;
+            z-index: 2;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .avatar-me {
+            width: 40px;
+            height: 40px;
+            background: var(--surface);
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: -0.5px;
+            color: var(--text-main);
+        }
+
+        /* Fluid Radar */
+        .radar-area {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .liquid-ring {
+            position: absolute;
+            background: var(--primary);
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            opacity: 0.05;
+            animation: morph 8s infinite linear;
+        }
+
+        .ring-1 { width: 180px; height: 180px; }
+        .ring-2 { width: 260px; height: 260px; animation-duration: 12s; animation-direction: reverse; }
+
+        @keyframes morph {
+            0% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: rotate(0deg); }
+            50% { border-radius: 60% 40% 30% 70% / 50% 30% 70% 40%; }
+            100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: rotate(360deg); }
+        }
+
+        .core-node {
+            width: 80px;
+            height: 80px;
+            background: var(--primary);
+            border-radius: 28px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.3);
+            z-index: 5;
+        }
+
+        /* Bento Grid List */
+        .device-grid {
+            padding: 0 20px 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            z-index: 2;
+        }
+
+        .grid-header {
+            grid-column: span 2;
+            padding: 0 8px 10px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .node-card {
+            background: var(--surface);
+            padding: 16px;
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease;
+            cursor: pointer;
+        }
+
+        .node-card:active { transform: scale(0.95); }
+
+        .node-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        .node-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+        .node-status { font-size: 11px; color: var(--text-dim); margin-bottom: 12px; }
+
+        .btn-send {
+            width: 100%;
+            background: var(--primary-light);
+            color: var(--primary);
+            border: none;
+            padding: 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-send:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Floating Active Transfer */
+        .active-transfer {
+            grid-column: span 2;
+            background: var(--text-main);
+            color: white;
+            padding: 16px;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .btn-stop {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .progress-pill {
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 0 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #FFF;
+            width: 45%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="phone-container">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="fab">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+    </div>
+    
+    <header>
+        <div class="user-profile">
+            <div class="avatar-me">👋</div>
+            <div>
+                <p style="margin:0; font-size: 11px; color: var(--text-dim); font-weight: 600;">YOU ARE VISIBLE AS</p>
+                <h1 style="font-size: 18px;">Poorn's Phone</h1>
+            </div>
+        </div>
+        <h1>Nearby Devices</h1>
+    </header>
+
+    <div class="radar-area">
+        <div class="liquid-ring ring-1"></div>
+        <div class="liquid-ring ring-2"></div>
+        <div class="core-node">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
+            </svg>
+        </div>
+    </div>
+
+    <div class="device-grid">
+        <div class="grid-header">Discovered Nodes</div>
+        
+        <div class="node-card">
+            <div class="node-icon">📱</div>
+            <div class="node-name">Sarah</div>
+            <div class="node-status">iPhone 15</div>
+            <button class="btn-send">Send File</button>
+        </div>
+
+        <div class="node-card">
+            <div class="node-icon">💻</div>
+            <div class="node-name">MacBook</div>
+            <div class="node-status">M2 Air</div>
+            <button class="btn-send">Send File</button>
+        </div>
+
+        <div class="active-transfer">
+            <div style="font-size: 20px;">📁</div>
+            <div style="flex: 1;">
+                <div style="font-size: 10px; font-weight: 800; color: rgba(255,255,255,0.6);">SENDING...</div>
+                <div style="font-size: 12px; font-weight: 700;">Photos.zip</div>
+                <div style="display:flex; align-items:center; margin-top:4px;">
+                    <div class="progress-pill"><div class="progress-fill"></div></div>
+                    <span style="font-size: 10px; font-weight: 800;">45%</span>
+                </div>
+            </div>
+            <button class="btn-stop">STOP</button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
